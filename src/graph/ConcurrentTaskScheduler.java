@@ -129,6 +129,9 @@ class Task implements Runnable {
     }
 }
 
+/**
+ * 基于DAG的任务调度 + 支持同层节点并发执行
+ */
 public class ConcurrentTaskScheduler {
     public static void main(String[] args) {
         DAG dag = new DAG();
