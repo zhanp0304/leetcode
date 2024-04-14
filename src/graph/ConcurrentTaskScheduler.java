@@ -131,6 +131,7 @@ class Task implements Runnable {
 
 /**
  * 基于DAG的任务调度 + 支持同层节点并发执行
+ * TODO： 这样其实属于特例，还不够完美，试想一下，假如同层的节点A1先执行了，但同层其他任务A2 A3 A4还未完成，但是B1仅仅依赖于A1，那是不是B1就可以运行而不需要等待呢？
  */
 public class ConcurrentTaskScheduler {
     public static void main(String[] args) {
