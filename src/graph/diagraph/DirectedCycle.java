@@ -16,29 +16,29 @@ public class DirectedCycle {
      */
     private Stack<Integer> cycle;
 
-    public DirectedCycle(DiaGraph diaGraph) {
-        onStack = new boolean[diaGraph.verticals()];
-        edgeTo = new int[diaGraph.verticals()];
-        visited = new boolean[diaGraph.verticals()];
+    public DirectedCycle(DiGraph diGraph) {
+        onStack = new boolean[diGraph.verticals()];
+        edgeTo = new int[diGraph.verticals()];
+        visited = new boolean[diGraph.verticals()];
 
-        for (int vertex = 0; vertex < diaGraph.verticals(); vertex++) {
+        for (int vertex = 0; vertex < diGraph.verticals(); vertex++) {
             if (!visited[vertex]) {
-                dfs(diaGraph, vertex);
+                dfs(diGraph, vertex);
             }
         }
     }
 
-    public void dfs(DiaGraph diaGraph, int vertex) {
+    public void dfs(DiGraph diGraph, int vertex) {
         visited[vertex] = true;
         onStack[vertex] = true;
 
-        for (int neighbor : diaGraph.adjacent(vertex)) {
+        for (int neighbor : diGraph.adjacent(vertex)) {
             if (hasCycle()) {
                 return;
             }
             if (!visited[neighbor]) {
                 edgeTo[neighbor] = vertex;
-                dfs(diaGraph, neighbor);
+                dfs(diGraph, neighbor);
             } else if (onStack[neighbor]) {
                 cycle = new Stack<>();
                 // Detect a cycle

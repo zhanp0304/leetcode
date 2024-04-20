@@ -15,7 +15,7 @@ public class DepthFirstOrderTest {
     }
 
     private static void testDepthFirstOrder() {
-        DiaGraph graph = new DiaGraph(7);
+        DiGraph graph = new DiGraph(7);
         graph.addEdge(0, 5);
         graph.addEdge(0, 1);
         graph.addEdge(0, 6);

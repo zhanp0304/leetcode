@@ -17,29 +17,29 @@ public class DepthFirstOrder {
     private final Deque<Integer> preOrders;
     private final Deque<Integer> postOrders;
 
-    public DepthFirstOrder(DiaGraph diaGraph) {
+    public DepthFirstOrder(DiGraph diGraph) {
         this.preOrders = new LinkedList<>();
         this.postOrders = new LinkedList<>();
-        this.marked = new boolean[diaGraph.verticals()];
+        this.marked = new boolean[diGraph.verticals()];
 
-        DirectedCycle directedCycle = new DirectedCycle(diaGraph);
+        DirectedCycle directedCycle = new DirectedCycle(diGraph);
         if (directedCycle.hasCycle()) {
             throw new IllegalArgumentException("The diagraph should not have cycle");
         }
-        for (int i = 0; i < diaGraph.verticals(); i++) {
+        for (int i = 0; i < diGraph.verticals(); i++) {
             if (!marked[i]) {
-                dfs(diaGraph, i);
+                dfs(diGraph, i);
             }
         }
     }
 
-    public void dfs(DiaGraph diaGraph, int vertex) {
+    public void dfs(DiGraph diGraph, int vertex) {
         marked[vertex] = true;
         preOrders.offer(vertex);
 
-        for (int neighbor : diaGraph.adjacent(vertex)) {
+        for (int neighbor : diGraph.adjacent(vertex)) {
             if (!marked[neighbor]) {
-                dfs(diaGraph, neighbor);
+                dfs(diGraph, neighbor);
             }
         }
         postOrders.offer(vertex);

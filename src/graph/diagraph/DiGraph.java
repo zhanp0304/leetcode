@@ -8,11 +8,11 @@ import java.util.List;
  *
  * @author zhanpeng.jiang 2024/4/20
  */
-public class DiaGraph {
+public class DiGraph {
     private int nodes;
     private LinkedList<Integer>[] adjacent;
 
-    public DiaGraph(int nodes) {
+    public DiGraph(int nodes) {
         this.nodes = nodes;
         this.adjacent = new LinkedList[nodes];
         for (int i = 0; i < nodes; i++) {

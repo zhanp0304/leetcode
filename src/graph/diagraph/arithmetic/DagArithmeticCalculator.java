@@ -1,6 +1,6 @@
 package graph.diagraph.arithmetic;
 
-import graph.diagraph.DiaGraph;
+import graph.diagraph.DiGraph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class DagArithmeticCalculator {
 
 
         // Built DAG graph
-        DiaGraph dag = new DiaGraph(values.length);
+        DiGraph dag = new DiGraph(values.length);
         // Say we already know how to connect the vertex （Possibly get them by front-end)
         dag.addEdge(0, 1);
         dag.addEdge(0, 6);

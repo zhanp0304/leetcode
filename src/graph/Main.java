@@ -2,12 +2,12 @@ package graph;
 
 import java.util.*;
 
-class MyDiaGraph {
+class MyDiGraph {
     private final Map<String, List<String>> adjList;
     private final Set<String> visited;
     private final Stack<String> stack;
 
-    MyDiaGraph() {
+    MyDiGraph() {
         adjList = new HashMap<>();
         visited = new HashSet<>();
         stack = new Stack<>();
@@ -81,7 +81,7 @@ class MyDiaGraph {
 
 public class Main {
     public static void main(String[] args) {
-        MyDiaGraph graph = new MyDiaGraph();
+        MyDiGraph graph = new MyDiGraph();
 //        graph.addEdge("A", "B");
 //        graph.addEdge("B", "C");
 //        graph.addEdge("C", "D");
