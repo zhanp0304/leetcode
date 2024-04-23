@@ -38,30 +38,27 @@ public class GroupByVertex implements DataModelVertex {
     }
 
     @Override
-    public String generateSql(DiGraph graph) {
+    public ModelSqlResult generateSql(DiGraph graph) {
         List<Integer> neighbors = graph.adjacent(index);
 
         if (neighbors.size() != 1) {
             throw new IllegalArgumentException("Only one neighbor can be connected by vertex of Group-By type");
         }
-        String neighborSql = vertices[neighbors.get(0)].generateSql(graph);
+        ModelSqlResult modelSqlResult = vertices[neighbors.get(0)].generateSql(graph);
 
         StringBuilder sql = new StringBuilder();
 
         String alias = TableAliasGenerator.generateAlias();
-        List<String> aliasFields =
-                selectAggregateFields.stream().map(field -> String.join(".", alias, field)).collect(Collectors.toList());
-        List<String> aliasGroupByFields =
-                groupByFields.stream().map(field -> String.join(".", alias, field)).collect(Collectors.toList());
-
+        List<String> aliasFields = SqlFieldsHelper.getAliasFields(selectAggregateFields, alias);
+        List<String> aliasGroupByFields = SqlFieldsHelper.getAliasFields(groupByFields, alias);
 
         sql.append("SELECT ")
                 .append(String.join(", ", aliasFields))
-                .append(" FROM ").append("( ").append(neighborSql).append(" )")
+                .append(" FROM ").append("( ").append(modelSqlResult.getSql()).append(" )")
                 .append(tableName)
                 .append(" ").append(alias)
                 .append("GROUP BY ").append(aliasGroupByFields);
 
-        return sql.toString();
+        return new ModelSqlResult(sql.toString(), selectAggregateFields);
     }
 }

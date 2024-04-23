@@ -9,20 +9,20 @@ public enum JoinTypeEnum {
     /**
      * 表与表的连接类型
      */
-    LEFT_JOIN("LEFT_JOIN", "左连接"),
-    RIGHT_JOIN("RIGHT_JOIN", "左连接"),
-    INNER_JOIN("INNER_JOIN", "左连接");
+    LEFT_JOIN("LEFT JOIN", "左连接"),
+    RIGHT_JOIN("RIGHT JOIN", "右连接"),
+    INNER_JOIN("INNER JOIN", "内连接");
 
-    private final String joinTypeCode;
+    private final String sqlJoin;
     private final String joinTypeMeaning;
 
-    JoinTypeEnum(String joinTypeCode, String joinTypeMeaning) {
-        this.joinTypeCode = joinTypeCode;
+    JoinTypeEnum(String sqlJoin, String joinTypeMeaning) {
+        this.sqlJoin = sqlJoin;
         this.joinTypeMeaning = joinTypeMeaning;
     }
 
-    public String getJoinTypeCode() {
-        return joinTypeCode;
+    public String getSqlJoin() {
+        return sqlJoin;
     }
 
     public String getJoinTypeMeaning() {

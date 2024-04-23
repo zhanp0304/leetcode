@@ -22,5 +22,5 @@ public interface DataModelVertex {
      * @param graph graph
      * @return sql
      */
-    String generateSql(DiGraph graph);
+    ModelSqlResult generateSql(DiGraph graph);
 }
