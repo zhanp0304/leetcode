@@ -13,6 +13,7 @@ public class TableAliasGenerator {
     }
 
     public static String generateAlias() {
-        return System.nanoTime() + UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+        String prefix = "Alias_" + UUID.randomUUID().toString().replace("-", "").substring(0, 5);
+        return prefix + System.nanoTime();
     }
 }

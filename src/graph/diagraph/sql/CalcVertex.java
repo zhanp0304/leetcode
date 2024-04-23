@@ -3,7 +3,6 @@ package graph.diagraph.sql;
 import graph.diagraph.DiGraph;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 计算列
@@ -46,7 +45,7 @@ public class CalcVertex implements DataModelVertex {
         sql.append("SELECT ")
                 .append(String.join(", ", aliasFields))
                 .append(" FROM ")
-                .append(" ( ").append(sqlResult).append(" )")
+                .append(" ( ").append(sqlResult.getSql()).append(" )")
                 .append(" ").append(alias);
 
         return new ModelSqlResult(sql.toString(), selectFields);

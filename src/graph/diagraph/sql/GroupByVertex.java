@@ -2,8 +2,9 @@ package graph.diagraph.sql;
 
 import graph.diagraph.DiGraph;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * 分组顶点
@@ -15,20 +16,28 @@ public class GroupByVertex implements DataModelVertex {
 
     private final int index;
 
-    private final List<String> selectAggregateFields;
+    private final List<String> selectFields;
+
+    private final List<String> aggregateFields;
+
+    private final Map<String, String> aggregateFunctionBySelectField;
+
+    private final Map<String, String> aliasFieldByOriginField;
 
     private final List<String> groupByFields;
 
-    private final String tableName;
-
     private final DataModelVertex[] vertices;
 
-    public GroupByVertex(int index, List<String> selectAggregateFields,
-                         List<String> groupByFields, String tableName, DataModelVertex[] vertices) {
+    public GroupByVertex(int index, List<String> selectFields,
+                         List<String> aggregateFields, Map<String, String> aggregateFunctionBySelectField,
+                         Map<String, String> aliasFieldByOriginField,
+                         List<String> groupByFields, DataModelVertex[] vertices) {
         this.index = index;
-        this.selectAggregateFields = selectAggregateFields;
+        this.selectFields = selectFields;
+        this.aggregateFields = aggregateFields;
+        this.aggregateFunctionBySelectField = aggregateFunctionBySelectField;
+        this.aliasFieldByOriginField = aliasFieldByOriginField;
         this.groupByFields = groupByFields;
-        this.tableName = tableName;
         this.vertices = vertices;
     }
 
@@ -48,17 +57,36 @@ public class GroupByVertex implements DataModelVertex {
 
         StringBuilder sql = new StringBuilder();
 
+        Map<Integer, String> needAroundWithAggregateFuncMap = new HashMap<>();
+        for (int i = 0; i < aggregateFields.size(); i++) {
+            String aggregateField = aggregateFields.get(i);
+            String aggregateFunc = aggregateFunctionBySelectField.get(aggregateField);
+            if (aggregateFunc != null) {
+                needAroundWithAggregateFuncMap.put(i, aggregateFunc);
+            }
+        }
+        // FIXME： 聚合函数的alias丢失
+
+        // TODO： alias需要重新设计，有点赶着看效果和实现MVP了
         String alias = TableAliasGenerator.generateAlias();
-        List<String> aliasFields = SqlFieldsHelper.getAliasFields(selectAggregateFields, alias);
-        List<String> aliasGroupByFields = SqlFieldsHelper.getAliasFields(groupByFields, alias);
+        List<String> aliasFields = SqlFieldsHelper.assembleFields(selectFields, alias, aliasFieldByOriginField, true);
+
+        for (int i = 0; i < aggregateFields.size(); i++) {
+            String aggregateFunc = needAroundWithAggregateFuncMap.get(i);
+            if (aggregateFunc != null) {
+                aggregateFields.set(i, aggregateFunc + "(" + aggregateFields.get(i) + ") AS " + aliasFieldByOriginField.get(aggregateFields.get(i)));
+            }
+        }
+
+        List<String> aliasGroupByFields = SqlFieldsHelper.assembleFields(groupByFields, alias, aliasFieldByOriginField, false);
 
         sql.append("SELECT ")
                 .append(String.join(", ", aliasFields))
+                .append(",").append(String.join(", ", aggregateFields))
                 .append(" FROM ").append("( ").append(modelSqlResult.getSql()).append(" )")
-                .append(tableName)
                 .append(" ").append(alias)
-                .append("GROUP BY ").append(aliasGroupByFields);
+                .append(" GROUP BY ").append(String.join(",", aliasGroupByFields));
 
-        return new ModelSqlResult(sql.toString(), selectAggregateFields);
+        return new ModelSqlResult(sql.toString(), selectFields);
     }
 }
