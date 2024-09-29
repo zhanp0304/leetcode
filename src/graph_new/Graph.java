@@ -1,5 +1,7 @@
 package graph_new;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -39,6 +41,12 @@ public class Graph {
             int to = scanner.nextInt();
             addEdge(from, to);
         }
+        scanner.close();
+    }
+
+    // 从文件中读取图的数据
+    public Graph(String filename) throws FileNotFoundException {
+        this(new Scanner(new File(filename)));
     }
 
     public int V() {
@@ -59,9 +67,9 @@ public class Graph {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s vertices, %s edges\n", V, E));
+        sb.append(String.format("%s vertices, %s edges%n", V, E));
         for (int v = 0; v < V; v++) {
-            sb.append(v + ": ");
+            sb.append(v).append(": ");
             // 保持与《算法》中的bag类型一致的顺序
             Iterator<Integer> iterator = adj[v].descendingIterator();
             while (iterator.hasNext()) {
@@ -72,8 +80,9 @@ public class Graph {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-        Graph graph = new Graph(new Scanner(System.in));
+    public static void main(String[] args) throws FileNotFoundException {
+//        Graph graph = new Graph(new Scanner(System.in));
+        Graph graph = new Graph("/Users/zhanpeng/Documents/project/self/leetcode/src/graph_new/tinyG.txt");
         System.out.println(graph);
     }
 }
