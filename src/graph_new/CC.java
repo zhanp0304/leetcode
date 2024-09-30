@@ -23,6 +23,7 @@ public class CC {
         for (int i = 0; i < graph.V(); i++) {
             if (!marked[i]) {
                 dfs(graph, i, count);
+                // 从dfs里出来后， 说明一个连通分量已生成, 此时count应该+1， 即将进入下一个连通分量
                 count++;
             }
         }
@@ -82,11 +83,13 @@ public class CC {
 
         System.out.println("Components: \n");
 
+        // 收集统计 每个连通分量
         List<Integer>[] components = new ArrayList[cc.count()];
         for (int i = 0; i < cc.count(); i++) {
             components[i] = new ArrayList<>();
         }
 
+        // 遍历所有顶点，将处于同一个连通分量的顶点 存入到对应的components中
         for (int i = 0; i < graph.V(); i++) {
             components[cc.id(i)].add(i);
         }
