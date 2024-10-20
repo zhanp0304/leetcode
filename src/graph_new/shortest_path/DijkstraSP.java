@@ -30,6 +30,7 @@ public class DijkstraSP {
         // Init
         this.edgeTo = new DirectedEdge[graph.verticals()];
         this.distTo = new Double[graph.verticals()];
+        // 用优先队列可以减少relax条件命中的次数，从而减少relax真正操作的次数，直接将复杂度从O(V ^ E) 优化到 O((V+E) * logV)
         this.minPq = new PriorityQueue<>();
 
         for (int v = 0; v < graph.verticals(); v++) {
