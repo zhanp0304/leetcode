@@ -1,18 +1,20 @@
 package graph_new.shortest_path;
 
-import graph.sp.DijkstraShortestPath;
 import graph.sp.DirectedEdge;
 import graph.sp.EdgeWeightedGraph;
 import graph.sp.GraphReader;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.PriorityQueue;
 
 /**
  * DijkstraSP
  *
  * @author zhanpeng.jiang 2024/10/20
  */
-public class DijkstraSP {
+public class NetworkDelayTime {
     /**
      * edgeTo[w] v -> w，在s -> w的最短路径上，the last edge to w [from = v, to = w]
      */
@@ -26,7 +28,13 @@ public class DijkstraSP {
      */
     private PriorityQueue<WeightForDistToW> minPq;
 
-    public DijkstraSP(EdgeWeightedGraph graph, int s) {
+    private int unProcessedCount;
+
+    private double maxDelayTime;
+
+    private boolean[] marked;
+
+    public NetworkDelayTime(EdgeWeightedGraph graph, int s) {
         // Init
         this.edgeTo = new DirectedEdge[graph.verticals()];
         this.distTo = new Double[graph.verticals()];
@@ -38,6 +46,12 @@ public class DijkstraSP {
         }
         distTo[s] = 0.0;
 
+        // 记录未处理顶点数（用于判断是否存在不可达顶点）
+        this.marked = new boolean[graph.verticals()];
+        this.unProcessedCount = graph.verticals();
+        // 最长延时时间
+        this.maxDelayTime = Double.NEGATIVE_INFINITY;
+
         // Build the SPT
         Iterable<DirectedEdge> adj = graph.adj(s);
         for (DirectedEdge edge : adj) {
@@ -45,7 +59,9 @@ public class DijkstraSP {
             minPq.add(new WeightForDistToW(edge.weight(), w));
             distTo[w] = edge.weight();
             edgeTo[w] = edge;
+            maxDelayTime = Math.max(maxDelayTime, edge.weight());
         }
+        marked[s] = true;
 
         while (!minPq.isEmpty()) {
             WeightForDistToW currentMin = minPq.poll();
@@ -71,6 +87,11 @@ public class DijkstraSP {
     }
 
     private void relax(EdgeWeightedGraph graph, int needProcessedV) {
+        if (!marked[needProcessedV]) {
+            marked[needProcessedV] = true;
+            --unProcessedCount;
+        }
+
         for (DirectedEdge adjEdge : graph.adj(needProcessedV)) {
             // distTo[w] > distTo[needProcessedV] + e.weight, then need relax
             int w = adjEdge.to();
@@ -83,9 +104,9 @@ public class DijkstraSP {
                 if (minPq.contains(weightForDistToW)) {
                     // Update the existed element's weight within minPq
                     minPq.remove(weightForDistToW);
-                    minPq.add(new WeightForDistToW(distTo[w], w));
+                    minPq.add(weightForDistToW);
                 } else {
-                    minPq.add(new WeightForDistToW(distTo[w], w));
+                    minPq.add(weightForDistToW);
                 }
             }
 
@@ -95,7 +116,7 @@ public class DijkstraSP {
     public static void main(String[] args) {
         EdgeWeightedGraph graph = GraphReader.readGraphFromFile("src/graph/sp/tinyEWD.txt");
         assert graph != null;
-        DijkstraSP dijkstra = new DijkstraSP(graph, 0);
+        NetworkDelayTime dijkstra = new NetworkDelayTime(graph, 0);
         Iterator<DirectedEdge> sp = dijkstra.pathTo(6);
         System.out.println("Shortest path: ");
         while (sp.hasNext()) {

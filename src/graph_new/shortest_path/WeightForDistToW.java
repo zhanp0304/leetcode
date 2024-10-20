@@ -50,4 +50,12 @@ public class WeightForDistToW implements Comparable<WeightForDistToW> {
     public int hashCode() {
         return Objects.hash(weight, vertex);
     }
+
+    public static void main(String[] args) {
+        WeightForDistToW distToW = new WeightForDistToW(0.2, 2);
+        WeightForDistToW aaa = new WeightForDistToW(0.2, 2);
+        if (distToW.equals(aaa)) {
+            System.out.println("true");
+        }
+    }
 }
